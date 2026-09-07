@@ -117,10 +117,12 @@ agent = Agent(
     verbosity=0,
 )
 
+
 @agent.tool
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
+
 
 print(agent.sync.call_tool("add", a=2, b=3))  # 5
 ```
@@ -196,10 +198,12 @@ agent = Agent(
     transport="http",
 )
 
+
 @agent.tool
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
+
 
 agent.start()
 ```

@@ -164,16 +164,16 @@ The `EndpointSpec` class (defined in `protolink.server.endpoint_handler`) is the
 ```python
 @dataclass(frozen=True)
 class EndpointSpec:
-    name: str              # Internal unique name for the endpoint
-    path: str              # URL path (e.g. "/tasks/")
-    method: HttpMethod     # HTTP Method (GET, POST, etc.)
-    handler: Callable      # Async function to process the request
-    
+    name: str  # Internal unique name for the endpoint
+    path: str  # URL path (e.g. "/tasks/")
+    method: HttpMethod  # HTTP Method (GET, POST, etc.)
+    handler: Callable  # Async function to process the request
+
     # Configuration
     content_type: Literal["json", "html"] = "json"
     streaming: bool = False
     mode: Literal["request_response", "stream"] = "request_response"
-    
+
     # Request Parsing
     request_parser: Callable[[Any], Any] | None = None
     request_source: RequestSourceType = "none"

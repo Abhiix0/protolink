@@ -118,12 +118,7 @@ Pipelines support a fluid API via the `.add_step()` method, allowing you to chai
 :::
 
 ```python
-pipeline = (
-    Pipeline(registry=registry)
-    .add_step("researcher")
-    .add_step("fact_checker")
-    .add_step("summarizer")
-)
+pipeline = Pipeline(registry=registry).add_step("researcher").add_step("fact_checker").add_step("summarizer")
 ```
 
 ### 2. Parallel Execution
@@ -149,10 +144,7 @@ Metadata from each branch is also merged into the final task. If two branches wr
 from protolink.flows import Parallel
 
 # Executes Editor and Reviewer at the exact same time
-parallel = Parallel(
-    branches=["editor", "reviewer"], 
-    registry=registry
-)
+parallel = Parallel(branches=["editor", "reviewer"], registry=registry)
 
 task = Task.create(Message.user("Please analyze this draft."))
 result = await parallel.execute(task)
@@ -193,12 +185,9 @@ Use `Router` when the content of the task should choose the next branch but the 
 from protolink.flows import Router
 
 router = Router(
-    routes={
-        "editor": "editor", 
-        "quality": "quality"
-    }, 
+    routes={"editor": "editor", "quality": "quality"},
     routing_prompt="If the text is poorly written, choose 'editor'. If it is perfect, choose 'quality'.",
-    registry=registry
+    registry=registry,
 )
 
 # Place the router in a Pipeline:
@@ -207,7 +196,7 @@ pipeline.add_step("writer").add_step(router)
 
 # The 'writer' agent will automatically receive the routing instructions and choose the path!
 task = Task.create(Message.user("Write a very short poem."))
-await pipeline.execute(task) 
+await pipeline.execute(task)
 ```
 
 In this example, the `writer` agent receives the routing instructions before it runs. The `Router` itself does not ask the model again; it reads the route decision already present on the task and dispatches to the mapped target.
@@ -229,14 +218,16 @@ graph.add_node("final", "quality")
 # 2. Add standard edges
 graph.add_edge("entry", "process")
 
+
 # 3. Add conditional routing edges
 def review_logic(t: Task) -> str:
-    return "approved" # Normally you'd inspect the task artifacts here
+    return "approved"  # Normally you'd inspect the task artifacts here
+
 
 graph.add_conditional_edge(
-    "process", 
-    review_logic, 
-    {"approved": "final", "rejected": "process"} # Loops back on rejection!
+    "process",
+    review_logic,
+    {"approved": "final", "rejected": "process"},  # Loops back on rejection!
 )
 
 graph.add_edge("final", "__END__")

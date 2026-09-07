@@ -55,26 +55,26 @@ class HuggingFaceLLM(APILLM):
     # ----------------------------------------------------------------------
 
     def call(self, history: ConversationHistory) -> str:
-        prompt = "\n".join(msg["content"] for msg in history.messages)
+        messages = [{"role": msg["role"], "content": msg["content"]} for msg in history.messages]
 
         try:
             logger.info(f"Calling HuggingFace API with model: {self.model}")
             response = self._client.chat_completion(
-                prompt,
+                messages,
                 model=self.model,
                 temperature=self._model_params.get("temperature", 1.0),
             )
             logger.info(f"Response type: {type(response)}")
 
-            # HF text_generation returns a string directly
-            if isinstance(response, str):
-                return response
-            # HF text_generation can also return a list of dicts
-            elif isinstance(response, list) and response:
-                return response[0].get("generated_text", "")
-            else:
-                logger.warning(f"Unexpected response format: {type(response)}")
-                return str(response) if response else ""
+            if hasattr(response, "choices") and response.choices:
+                try:
+                    content = response.choices[0].message.content
+                    return content if content is not None else ""
+                except AttributeError:
+                    pass
+
+            logger.warning(f"Unexpected response format: {type(response)}")
+            return str(response) if response else ""
         except StopIteration as e:
             logger.error(
                 f"StopIteration error in HuggingFace API call. "
@@ -89,8 +89,42 @@ class HuggingFaceLLM(APILLM):
             raise
 
     async def call_stream(self, history: ConversationHistory) -> AsyncIterator[str]:
-        # TODO: Implement streaming
-        yield ""
+        messages = [{"role": msg["role"], "content": msg["content"]} for msg in history.messages]
+
+        try:
+            logger.info(f"Calling HuggingFace streaming API with model: {self.model}")
+            stream = self._client.chat_completion(
+                messages,
+                model=self.model,
+                stream=True,
+                temperature=self._model_params.get("temperature", 1.0),
+            )
+
+            for chunk in stream:
+                if hasattr(chunk, "choices") and chunk.choices:
+                    delta = getattr(chunk.choices[0], "delta", None)
+                    content = getattr(delta, "content", None) if delta is not None else None
+                    if content:
+                        yield content
+                elif isinstance(chunk, dict) and "choices" in chunk:
+                    choices = chunk.get("choices", [])
+                    if choices and isinstance(choices[0], dict):
+                        delta = choices[0].get("delta", {})
+                        content = delta.get("content") if isinstance(delta, dict) else getattr(delta, "content", None)
+                        if content:
+                            yield content
+        except StopIteration as e:
+            logger.error(
+                f"StopIteration error in HuggingFace API call. "
+                f"This may indicate a provider mapping issue. Model: {self.model}"
+            )
+            raise ValueError(
+                f"HuggingFace API provider mapping failed for model '{self.model}'. "
+                f"The model may not be available or there's a configuration issue."
+            ) from e
+        except Exception as e:
+            logger.error(f"Error in HuggingFace streaming API call: {e}")
+            raise
 
     # ----------------------------------------------------------------------
     # Utils

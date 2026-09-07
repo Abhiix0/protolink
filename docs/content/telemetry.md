@@ -119,9 +119,11 @@ agent = Agent(
     telemetry=telemetry,
 )
 
+
 @agent.tool(name="add", description="Add two integers")
 async def add(a: int, b: int) -> int:
     return a + b
+
 
 result = await agent.handle_task(Task.create_tool_call(tool_name="add", args={"a": 2, "b": 3}))
 records = telemetry.recorder.replay()
@@ -152,7 +154,7 @@ llm = create_llm(
     model="my-model",
     metrics_profile=LLMModelProfile(
         context_window=128_000,
-        input_cost_per_million=1.0,   # example value; use your provider's current pricing
+        input_cost_per_million=1.0,  # example value; use your provider's current pricing
         output_cost_per_million=5.0,  # example value; use your provider's current pricing
     ),
 )
@@ -198,7 +200,7 @@ telemetry_tracker = LangfuseTelemetry()
 # Inject into an agent
 agent = Agent(
     card={"name": "ObserverAgent", "description": "Observed agent", "url": "runtime://observer"},
-    telemetry=telemetry_tracker
+    telemetry=telemetry_tracker,
 )
 ```
 
@@ -221,7 +223,7 @@ telemetry_tracker = LangSmithTelemetry()
 # Inject into an agent
 agent = Agent(
     card={"name": "ObserverAgent", "description": "Observed agent", "url": "runtime://observer"},
-    telemetry=telemetry_tracker
+    telemetry=telemetry_tracker,
 )
 ```
 
@@ -241,7 +243,7 @@ multi_tracker = MultiTelemetry([langfuse_tracker, langsmith_tracker])
 # Inject into an agent
 agent = Agent(
     card={"name": "ObserverAgent", "description": "Observed agent", "url": "runtime://observer"},
-    telemetry=multi_tracker
+    telemetry=multi_tracker,
 )
 ```
 
@@ -269,13 +271,14 @@ from typing import Any
 from protolink.models import Task, Part
 from protolink.telemetry.base import Telemetry
 
+
 class MyCustomTelemetry(Telemetry):
     async def on_task_start(self, task: Task, agent_name: str) -> Any:
         pass
-        
+
     async def on_task_end(self, task: Task, result: Task, agent_name: str) -> Any:
         pass
-        
+
     async def on_llm_start(
         self,
         prompt: str,
@@ -283,13 +286,13 @@ class MyCustomTelemetry(Telemetry):
         metadata: dict[str, Any] | None = None,
     ) -> Any:
         pass
-        
+
     async def on_llm_end(self, response: Part) -> Any:
         pass
-        
+
     async def on_tool_start(self, tool_name: str, args: dict[str, Any]) -> Any:
         pass
-        
+
     async def on_tool_end(self, tool_name: str, result: Any, error: str | None = None) -> Any:
         pass
 
@@ -325,9 +328,7 @@ async def main() -> None:
         telemetry=telemetry,
     )
 
-    result = await agent.handle_task(
-        Task.create_infer(prompt="Give me one concise release-planning tip.")
-    )
+    result = await agent.handle_task(Task.create_infer(prompt="Give me one concise release-planning tip."))
     print(result.get_last_part_content())
 
 

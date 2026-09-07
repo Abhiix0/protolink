@@ -524,11 +524,7 @@ from protolink import Message, Part
 user_message = Message.user("What's the weather?")
 agent_message = Message.agent("It's sunny and 24°C.")
 
-multi_part = (
-    Message(role="user")
-    .add_text("Analyze this payload:")
-    .add_part(Part.json({"city": "Athens"}))
-)
+multi_part = Message(role="user").add_text("Analyze this payload:").add_part(Part.json({"city": "Athens"}))
 
 route_message = Message.route(
     "quality",
@@ -1587,8 +1583,8 @@ Serialize the card into ProtoLink's native discovery-card dictionary. Nested cap
 ```python
 payload = card.to_dict()
 
-print(payload["name"])                  # "weather_agent"
-print(payload["protocolVersion"])       # installed ProtoLink version
+print(payload["name"])  # "weather_agent"
+print(payload["protocolVersion"])  # installed ProtoLink version
 print(payload["additionalInterfaces"])  # serialized alternate route
 ```
 
@@ -2633,7 +2629,7 @@ Create a submitted task with one initial message and initialize the last-item ca
 task = Task.create(Message.user("Analyze this data"))
 
 print(len(task.messages))  # 1
-print(task.state)          # TaskState.SUBMITTED
+print(task.state)  # TaskState.SUBMITTED
 ```
 
 </ApiSection>
@@ -2894,8 +2890,8 @@ task = Task.create(Message.user("What's the weather in New York?"))
 task.begin()
 task.complete("It's 22°C and sunny in New York.")
 
-print(task.is_terminal)             # True
-print(task.get_last_part_content()) # "It's 22°C and sunny in New York."
+print(task.is_terminal)  # True
+print(task.get_last_part_content())  # "It's 22°C and sunny in New York."
 ```
 
 </ApiSection>
@@ -3038,8 +3034,10 @@ Transport-agnostic declaration of one server endpoint. Server implementations as
 ```python
 from protolink.models import EndpointSpec
 
+
 async def create_task(task):
     return await agent.execute_task(task)
+
 
 endpoint = EndpointSpec(
     name="create_task",
@@ -3921,10 +3919,7 @@ report = llm.compact_history(
 )
 
 if report.changed:
-    print(
-        f"Compacted {report.before_messages} messages "
-        f"to {report.after_messages}"
-    )
+    print(f"Compacted {report.before_messages} messages to {report.after_messages}")
 
 print(report.to_dict())
 ```

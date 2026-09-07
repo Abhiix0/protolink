@@ -573,10 +573,7 @@ Wrap one Message in a new Task, delegate to <code>send_task()</code>, then retur
 ```python
 from protolink.models import Message
 
-response = await client.send_message(
-    agent_url="http://localhost:8010",
-    message=Message.user("Hello, agent!")
-)
+response = await client.send_message(agent_url="http://localhost:8010", message=Message.user("Hello, agent!"))
 print(response.parts[0].content)
 ```
 

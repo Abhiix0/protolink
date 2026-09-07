@@ -333,8 +333,10 @@ context = RunContext(
 
 events = []
 
+
 async def capture(event):
     events.append(event)
+
 
 await llm.infer(
     query="Summarize this context",
@@ -847,10 +849,12 @@ from protolink import Agent, AgentCard, Task
 
 agent = Agent(AgentCard(name="worker", description="Worker", url="runtime://worker"))
 
+
 @agent.tool
 async def wait_for_signal() -> None:
     """Wait until this task is canceled."""
     await asyncio.Event().wait()
+
 
 task = Task.create_tool_call(tool_name="wait_for_signal")
 
@@ -1253,6 +1257,7 @@ policy = CapabilityPolicy(
     }
 )
 
+
 async def approve(request, context):
     # Render request.action and request.action.artifacts in any UI.
     return ApprovalDecision(
@@ -1260,6 +1265,7 @@ async def approve(request, context):
         request_id=request.request_id,
         decided_by="operator",
     )
+
 
 agent = Agent(card, policy=policy, approval_handler=approve)
 ```
@@ -1451,6 +1457,7 @@ Native tools can attach action previews through `action_builder`:
 ```python
 from protolink import Artifact, Part, RunAction
 
+
 def build_preview(arguments, context):
     return RunAction(
         kind="tool.call",
@@ -1464,6 +1471,7 @@ def build_preview(arguments, context):
             ),
         ),
     )
+
 
 @agent.tool(
     name="publish_record",

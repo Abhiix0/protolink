@@ -37,10 +37,7 @@ Using storage with an agent is straightforward:
    ```python
    from protolink.storage import SQLiteStorage
 
-   storage = SQLiteStorage(
-       db_path="agent_memory.db",
-       namespace="my_agent"
-   )
+   storage = SQLiteStorage(db_path="agent_memory.db", namespace="my_agent")
    ```
 
 2. **Pass the Storage instance to your Agent**:
@@ -49,17 +46,13 @@ Using storage with an agent is straightforward:
    from protolink.agents import Agent
    from protolink.models import AgentCard
 
-   agent_card = AgentCard(
-       url="http://localhost:8020",
-       name="memory_agent",
-       description="Agent with long-term memory"
-   )
+   agent_card = AgentCard(url="http://localhost:8020", name="memory_agent", description="Agent with long-term memory")
 
    agent = Agent(
        card=agent_card,
        transport="http",
        storage=storage,
-       state=["conversation"]  # Enables persistence for specific modules
+       state=["conversation"],  # Enables persistence for specific modules
    )
    ```
 
@@ -1461,9 +1454,7 @@ from protolink import Message, RunContext, Task
 from protolink.storage import SQLiteRunStore
 
 run_store = SQLiteRunStore("runs.db")
-task = Task.create(
-    Message(role="user").add_text("prepare the release notes")
-)
+task = Task.create(Message(role="user").add_text("prepare the release notes"))
 context = RunContext(run_id="release-2026-07", session_id="release")
 
 record = run_store.save_task(
@@ -1484,17 +1475,18 @@ Agents can use the storage field to persist their state, conversation context, o
 from protolink.agents import Agent
 from protolink.storage import SQLiteStorage
 
+
 class PersistentAgent(Agent):
     async def handle_task(self, task):
         # Load previous state
         state = self.storage.load() or {"count": 0}
-        
+
         # Increment a counter
         state["count"] += 1
-        
+
         # Save updated state
         self.storage.save(state)
-        
+
         return await super().handle_task(task)
 ```
 
