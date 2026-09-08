@@ -535,9 +535,11 @@ structured tool errors instead of unchecked exceptions inside application code.
 ```python
 from pydantic import BaseModel, Field
 
+
 class BookingRequest(BaseModel):
     location: str
     guests: int = Field(gt=0)
+
 
 @agent.tool(
     name="book_hotel",

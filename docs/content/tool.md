@@ -35,7 +35,7 @@ from protolink.tools import (
     web_search,
 )
 
-# Tool adapters for external integrations  
+# Tool adapters for external integrations
 from protolink.tools.adapters import MCPToolAdapter
 ```
 
@@ -266,9 +266,11 @@ Create a reusable tool from a synchronous or asynchronous callable. The default 
 ```python
 from protolink import Tool
 
+
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
+
 
 add_tool = Tool.from_callable(add, tags=["math"])
 agent.add_tool(add_tool)
@@ -728,16 +730,14 @@ Pass an existing function to `agent.add_tool()` or decorate a function with `@ag
 ```python
 from protolink import Agent, AgentCard
 
-agent_card = AgentCard(
-    url="runtime://calculator",
-    name="calculator_agent", 
-    description="Agent with math tools"
-)
+agent_card = AgentCard(url="runtime://calculator", name="calculator_agent", description="Agent with math tools")
 agent = Agent(card=agent_card, transport="runtime", verbosity=0)
+
 
 def add(a: int, b: int) -> int:
     """Add two integers and return the result."""
     return a + b
+
 
 agent.add_tool(add)
 
@@ -746,6 +746,7 @@ agent.add_tool(add)
 async def multiply(a: float, b: float) -> float:
     """Multiply two numbers and return the result."""
     return a * b
+
 
 print(agent.sync.call_tool("add", a=2, b=3))  # 5
 
@@ -836,9 +837,11 @@ Tool schemas are first-class JSON Schema objects. Native tools infer nested sche
 ```python
 from pydantic import BaseModel, Field
 
+
 class BookingRequest(BaseModel):
     location: str
     guests: int = Field(gt=0)
+
 
 @agent.tool(
     name="book_hotel",
@@ -1021,14 +1024,17 @@ Declare capabilities for operations that should participate in runtime policy. C
 ```python
 from protolink import Agent, ApprovalDecision, CapabilityPolicy
 
+
 async def approve(request, context):
     return ApprovalDecision(approved=True, request_id=request.request_id)
+
 
 agent = Agent(
     card,
     policy=CapabilityPolicy({"records.write": "require_approval"}),
     approval_handler=approve,
 )
+
 
 @agent.tool(
     name="publish_record",
@@ -1076,11 +1082,7 @@ Native tools are ideal for:
 Tools can be categorized using tags for better organization and discovery:
 
 ```python
-@agent.tool(
-    name="calculate", 
-    description="Performs arithmetic calculations", 
-    tags=["math", "utility"]
-)
+@agent.tool(name="calculate", description="Performs arithmetic calculations", tags=["math", "utility"])
 async def calculate(operation: str, a: float, b: float) -> float:
     """Perform basic arithmetic operations."""
     if operation == "add":
@@ -1097,11 +1099,7 @@ async def calculate(operation: str, a: float, b: float) -> float:
         raise ValueError(f"Unsupported operation: {operation}")
 
 
-@agent.tool(
-    name="search_documents", 
-    description="Search internal documents", 
-    tags=["search", "documents", "rag"]
-)
+@agent.tool(name="search_documents", description="Search internal documents", tags=["search", "documents", "rag"])
 async def search_documents(query: str, limit: int = 10) -> list[dict]:
     """Search the document database."""
     # Implementation here
@@ -1206,18 +1204,10 @@ Connect to a local MCP server running as a Python script:
 from protolink.tools.adapters import MCPToolAdapter
 
 # Connect to a local MCP server
-adapter = MCPToolAdapter(
-    transport="stdio",
-    command="python",
-    args=["path/to/mcp_server.py"]
-)
+adapter = MCPToolAdapter(transport="stdio", command="python", args=["path/to/mcp_server.py"])
 
 # Or with a Node.js server
-adapter = MCPToolAdapter(
-    transport="stdio",
-    command="node",
-    args=["path/to/mcp_server.js"]
-)
+adapter = MCPToolAdapter(transport="stdio", command="node", args=["path/to/mcp_server.js"])
 ```
 
 #### Remote MCP Server (SSE)
@@ -1228,16 +1218,11 @@ Connect to a remote MCP server over HTTP:
 from protolink.tools.adapters import MCPToolAdapter
 
 # Connect to a remote MCP server
-adapter = MCPToolAdapter(
-    transport="sse",
-    url="http://localhost:8080/sse"
-)
+adapter = MCPToolAdapter(transport="sse", url="http://localhost:8080/sse")
 
 # With authentication
 adapter = MCPToolAdapter(
-    transport="sse",
-    url="https://api.example.com/mcp/sse",
-    headers={"Authorization": "Bearer your-api-token"}
+    transport="sse", url="https://api.example.com/mcp/sse", headers={"Authorization": "Bearer your-api-token"}
 )
 ```
 
@@ -1365,12 +1350,13 @@ Wrap a specific tool as a `BaseTool`-compatible object:
 add_tool = adapter.wrap_tool("add")
 
 # Access metadata
-print(add_tool.name)         # "add"
+print(add_tool.name)  # "add"
 print(add_tool.description)  # "Add two integers."
-print(add_tool.input_schema) # {"type": "object", "properties": {"a": {"type": "integer"}}, ...}
+print(add_tool.input_schema)  # {"type": "object", "properties": {"a": {"type": "integer"}}, ...}
 
 # Invoke asynchronously
 import asyncio
+
 result = asyncio.run(add_tool(a=5, b=7))
 print(result)  # "12"
 ```
@@ -1383,10 +1369,10 @@ Use the **synchronous** callable directly from the tool dictionary:
 tools = adapter.list_tools()
 
 # Find the tool you want
-add_tool = next(t for t in tools if t['name'] == 'add')
+add_tool = next(t for t in tools if t["name"] == "add")
 
 # Invoke it (synchronous)
-result = add_tool['callable'](a=5, b=7)
+result = add_tool["callable"](a=5, b=7)
 print(result)  # "12"
 ```
 
@@ -1407,19 +1393,11 @@ from protolink.models import AgentCard
 from protolink.tools.adapters import MCPToolAdapter
 
 # Create the agent
-agent_card = AgentCard(
-    url="http://localhost:8020",
-    name="mcp_agent", 
-    description="Agent with MCP tools"
-)
+agent_card = AgentCard(url="http://localhost:8020", name="mcp_agent", description="Agent with MCP tools")
 agent = Agent(card=agent_card, transport="http")
 
 # Connect to MCP server
-adapter = MCPToolAdapter(
-    transport="stdio",
-    command="python",
-    args=["mcp_server.py"]
-)
+adapter = MCPToolAdapter(transport="stdio", command="python", args=["mcp_server.py"])
 
 # Get all tools as native Protolink Tool objects
 mcp_tools = adapter.get_tools()
@@ -1446,25 +1424,26 @@ Here's a complete example showing how to create an MCP server and use it with Pr
 from mcp.server.fastmcp import FastMCP
 
 # Create the MCP server
-mcp = FastMCP(
-    name="math-tools",
-    instructions="Simple MCP server with math tools"
-)
+mcp = FastMCP(name="math-tools", instructions="Simple MCP server with math tools")
+
 
 @mcp.tool()
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
 
+
 @mcp.tool()
 def multiply(a: int, b: int) -> int:
     """Multiply two integers."""
     return a * b
 
+
 @mcp.tool()
 def greet(name: str) -> str:
     """Greet a person by name."""
     return f"Hello, {name}! 👋"
+
 
 if __name__ == "__main__":
     mcp.run()
@@ -1476,11 +1455,7 @@ if __name__ == "__main__":
 from protolink.tools.adapters import MCPToolAdapter
 
 # Connect to the MCP server
-adapter = MCPToolAdapter(
-    transport="stdio",
-    command="python",
-    args=["mcp_server.py"]
-)
+adapter = MCPToolAdapter(transport="stdio", command="python", args=["mcp_server.py"])
 
 # Discover available tools
 print("Available tools:")

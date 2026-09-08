@@ -414,7 +414,7 @@ llm = create_llm(
     model="my-model",
     metrics_profile=LLMModelProfile(
         context_window=128_000,
-        input_cost_per_million=1.0,   # example value; use current provider pricing
+        input_cost_per_million=1.0,  # example value; use current provider pricing
         output_cost_per_million=5.0,  # example value; use current provider pricing
         supports_tools=True,
         supports_streaming=True,
@@ -1173,9 +1173,11 @@ result, it should validate `part.content` separately and apply only domain-safe 
 ```python
 from pydantic import BaseModel, Field
 
+
 class Decision(BaseModel):
     label: str
     confidence: float = Field(ge=0, le=1)
+
 
 part = await llm.infer(
     query="Return the requested decision as JSON in final content.",
@@ -1330,9 +1332,11 @@ agent = Agent(
     llm=create_llm("openai", model="gpt-4o-mini"),
 )
 
+
 @agent.tool(name="weather", description="Return the weather for a location")
 async def weather(location: str) -> str:
     return f"The weather in {location} is sunny."
+
 
 answer = await agent.invoke("What's the weather in Tokyo?")
 print(answer)
@@ -2759,6 +2763,7 @@ import asyncio
 
 from protolink import Agent, AgentCard, create_llm
 
+
 async def main():
     agent = Agent(
         AgentCard(
@@ -2776,6 +2781,7 @@ async def main():
 
     answer = await agent.invoke("What is 15 multiplied by 8?")
     print(f"Final answer: {answer}")
+
 
 asyncio.run(main())
 ```
@@ -2840,6 +2846,7 @@ from protolink import (
     create_llm,
 )
 
+
 async def safe_inference():
     llm = create_llm("openai", model="gpt-4o-mini")
 
@@ -2863,6 +2870,7 @@ async def safe_inference():
         print(f"Inference failed: {exc}")
     except Exception as exc:
         print(f"Provider or configuration error: {exc}")
+
 
 asyncio.run(safe_inference())
 ```

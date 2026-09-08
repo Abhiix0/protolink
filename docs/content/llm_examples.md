@@ -62,12 +62,14 @@ To receive tokens in real-time as they are generated, set `streaming=True`.
 ```python
 import asyncio
 
+
 async def test_streaming():
     print("\nTesting streaming response:")
     query = "Explain quantum computing in one sentence."
     async for chunk in llm.chat(query, streaming=True):
         print(chunk, end="", flush=True)
     print("\n")
+
 
 await test_streaming()
 ```
@@ -154,14 +156,7 @@ from protolink.models import Message, Part, Task
 from protolink.client import AgentClient
 
 # Define the user's question
-task = Task(
-    messages=[
-        Message(
-            role="user", 
-            parts=[Part.infer(prompt="What's the weather right now in Geneva?")]
-        )
-    ]
-)
+task = Task(messages=[Message(role="user", parts=[Part.infer(prompt="What's the weather right now in Geneva?")])])
 
 # Or use the convenience method
 task = Task.create_infer(prompt="What's the weather right now in Geneva?")
@@ -189,14 +184,12 @@ Now, we dynamically register a tool with the agent. Protolink automatically expo
 # Stop the agent to modify it safely (optional but good practice)
 agent.stop()
 
-@agent.tool(
-    name="weather_info", 
-    description="Get weather information for a location", 
-    input_schema={"location": str}
-)
+
+@agent.tool(name="weather_info", description="Get weather information for a location", input_schema={"location": str})
 def get_weather(location: str) -> str:
     # Simulating an API call
     return f"The weather in {location} is sunny."
+
 
 agent.start(background=True)
 ```
@@ -310,10 +303,9 @@ weather_agent = Agent(
     registry=registry,
 )
 
+
 @weather_agent.tool(
-    name="get_weather", 
-    description="Get current weather for a location", 
-    input_schema={"location": str}
+    name="get_weather", description="Get current weather for a location", input_schema={"location": str}
 )
 def get_weather(location: str) -> str:
     """Simulated weather lookup."""
@@ -324,6 +316,7 @@ def get_weather(location: str) -> str:
         "new york": "Partly cloudy, 20°C",
     }
     return weather_data.get(location.lower(), f"Weather data not available for {location}")
+
 
 weather_agent.start(background=True)
 print(f"Weather Agent running at {WEATHER_AGENT_URL}")

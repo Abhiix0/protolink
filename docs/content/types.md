@@ -774,8 +774,8 @@ server_llm = create_llm(
     model="llama3",
 )
 
-print(api_llm.model_type)     # "api"
-print(local_llm.model_type)   # "local"
+print(api_llm.model_type)  # "api"
+print(local_llm.model_type)  # "local"
 print(server_llm.model_type)  # "server"
 ```
 
@@ -1272,12 +1272,7 @@ review: FlowTarget = Parallel(
     ]
 )
 
-flow = (
-    Pipeline()
-    .add_step(researcher)
-    .add_step("writer_agent")
-    .add_step(review)
-)
+flow = Pipeline().add_step(researcher).add_step("writer_agent").add_step(review)
 ```
 
 </ApiSection>
@@ -1315,6 +1310,7 @@ Aliases communicate intent more precisely than an unrestricted string:
 
 ```python
 from protolink.types import LLMProvider
+
 
 def build_model(provider: LLMProvider, model: str):
     return create_llm(provider, model=model)

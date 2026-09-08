@@ -70,11 +70,7 @@ agent_card = AgentCard(
 )
 
 # Option 2: Using dictionary (simpler)
-card_dict = {
-    "name": "example_agent",
-    "description": "A dummy agent",
-    "url": "http://localhost:8000"
-}
+card_dict = {"name": "example_agent", "description": "A dummy agent", "url": "http://localhost:8000"}
 
 transport = HTTPTransport(url="http://localhost:8000")
 llm = OpenAILLM(model="gpt-4o-mini")
@@ -1064,7 +1060,7 @@ writer = Agent(
         "description": "Writes drafts and decides routes.",
         "capabilities": {
             "delegation": False  # Disables A2A delegation completely
-        }
+        },
     },
     llm=llm,
 )
@@ -1274,10 +1270,12 @@ agent = Agent(
     verbosity=0,
 )
 
+
 @agent.tool
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
+
 
 print(agent.sync.call_tool("add", a=2, b=3))  # 5
 
@@ -1332,9 +1330,9 @@ card = AgentCard(
             id="get_weather",
             description="Get current weather for a location",
             tags=["weather", "forecast"],
-            examples=["What's the weather in New York?"]
+            examples=["What's the weather in New York?"],
         )
-    ]
+    ],
 )
 
 # Use fixed mode to only use these skills
@@ -1409,6 +1407,7 @@ Register a Python callable or an existing tool and synchronize its public skill 
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
+
 
 agent.add_tool(add)
 print(agent.sync.call_tool("add", a=2, b=3))  # 5
@@ -1508,6 +1507,7 @@ def calculate(operation: str, a: float, b: float) -> float:
         return a * b
     else:
         raise ValueError(f"Unsupported operation: {operation}")
+
 
 # Direct registration of built-in Tool instances
 from protolink.tools import current_datetime, web_search
@@ -1633,6 +1633,7 @@ The `Storage` base class defines the CRUD interface:
 
 ```python
 from protolink.storage import Storage
+
 
 class MyStorage(Storage):
     def save(self, data): ...
@@ -1833,6 +1834,7 @@ The `Agent` class provides a default implementation for `handle_task` that handl
 ```python
 from protolink.agents import Agent
 from protolink.models import AgentCard, Task, Message
+
 
 class EchoAgent(Agent):
     async def handle_task(self, task: Task) -> Task:

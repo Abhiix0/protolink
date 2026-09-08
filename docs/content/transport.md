@@ -1508,8 +1508,8 @@ class EchoAgent(Agent):
     def __init__(self, port: int) -> None:
         url = f"http://127.0.0.1:{port}"
         card = AgentCard(
-            name="echo", 
-            description="Echoes back the last user message", 
+            name="echo",
+            description="Echoes back the last user message",
             url=url,
         )
         transport = HTTPTransport(url=url)

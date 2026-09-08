@@ -79,6 +79,7 @@ from typing import Any
 
 from protolink.utils import utc_now
 
+
 @dataclass
 class SecurityContext:
     principal_id: str
@@ -99,6 +100,7 @@ The `SecurityScheme` outlines the metadata of the authentication mechanism used.
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass
 class SecurityScheme:
     auth_type: str  # e.g., "apiKey", "http", "oauth2"
@@ -112,6 +114,7 @@ All security providers inherit from the `Authenticator` abstract base class. It 
 
 ```python
 from abc import ABC, abstractmethod
+
 
 class Authenticator(ABC):
     @property
@@ -151,12 +154,7 @@ the returned `SecurityContext`.
 ```python
 from protolink.security.auth import APIKeyAuth
 
-auth = APIKeyAuth(
-    valid_keys={
-        "sk-12345": ["read", "write"],
-        "sk-abcde": ["read"]
-    }
-)
+auth = APIKeyAuth(valid_keys={"sk-12345": ["read", "write"], "sk-abcde": ["read"]})
 ```
 
 </TabItem>
@@ -185,12 +183,7 @@ Supported algorithms are `HS256`, `HS384`, and `HS512`. Use `APIKeyAuth` for sta
 ```python
 from protolink.security.auth import BasicAuth
 
-auth = BasicAuth(
-    valid_credentials={
-        "admin": "super-secret-password-123",
-        "developer": "dev-pass"
-    }
-)
+auth = BasicAuth(valid_credentials={"admin": "super-secret-password-123", "developer": "dev-pass"})
 ```
 
 </TabItem>
@@ -207,7 +200,7 @@ from protolink.security.auth import OAuth2DelegationAuth
 auth = OAuth2DelegationAuth(
     exchange_endpoint="https://auth.myorganization.com/oauth/token",
     client_id="my-agent-client-id",
-    client_secret="my-agent-client-secret"
+    client_secret="my-agent-client-secret",
 )
 ```
 
@@ -249,9 +242,7 @@ from protolink.security.auth import APIKeyAuth
 
 # Secure HTTP transport using FastAPI backend
 transport = HTTPTransport(
-    url="http://127.0.0.1:8000",
-    backend="fastapi",
-    authenticator=APIKeyAuth(valid_keys={"my-secret": ["write"]})
+    url="http://127.0.0.1:8000", backend="fastapi", authenticator=APIKeyAuth(valid_keys={"my-secret": ["write"]})
 )
 ```
 
@@ -264,8 +255,7 @@ from protolink.transport import WebSocketTransport
 from protolink.security.auth import APIKeyAuth
 
 ws_transport = WebSocketTransport(
-    url="ws://127.0.0.1:8080",
-    authenticator=APIKeyAuth(valid_keys={"ws-key": ["connect"]})
+    url="ws://127.0.0.1:8080", authenticator=APIKeyAuth(valid_keys={"ws-key": ["connect"]})
 )
 ```
 
@@ -324,9 +314,7 @@ from protolink.transport import HTTPTransport
 from protolink.security.auth import APIKeyAuth
 
 client_transport = HTTPTransport(
-    url="http://127.0.0.1:8000",
-    authenticator=APIKeyAuth(valid_keys={"key123": ["read"]}),
-    credentials="key123"
+    url="http://127.0.0.1:8000", authenticator=APIKeyAuth(valid_keys={"key123": ["read"]}), credentials="key123"
 )
 ```
 
@@ -355,7 +343,7 @@ agent = Agent(
     card={"name": "secure-agent", "description": "Needs login", "url": "http://127.0.0.1:8000"},
     transport="http",
     authenticator=BasicAuth(valid_credentials={"admin": "secret"}),
-    credentials="admin:secret"
+    credentials="admin:secret",
 )
 ```
 
@@ -411,28 +399,21 @@ To integrate custom enterprise identity management (e.g. LDAP, active directory,
 ```python
 from protolink.security.auth import Authenticator, SecurityScheme, SecurityContext
 
+
 class LDAPAuthenticator(Authenticator):
-    
     @property
     def security_scheme(self) -> SecurityScheme:
-        return SecurityScheme(
-            auth_type="http",
-            auth_scheme="basic",
-            description="Active Directory / LDAP validation"
-        )
+        return SecurityScheme(auth_type="http", auth_scheme="basic", description="Active Directory / LDAP validation")
 
     async def authenticate(self, credentials: str) -> SecurityContext:
         username, password = credentials.split(":")
         # Implement custom LDAP check logic here
         success = my_ldap_library.verify(username, password)
-        
+
         if not success:
             raise ValueError("Invalid LDAP credentials")
-            
-        return SecurityContext(
-            principal_id=username,
-            token=credentials
-        )
+
+        return SecurityContext(principal_id=username, token=credentials)
 
     async def refresh_token(self, context: SecurityContext) -> SecurityContext:
         # LDAP credentials have no token refresh protocol in this example.

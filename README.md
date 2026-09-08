@@ -60,10 +60,12 @@ agent = Agent(
     verbosity=0,
 )
 
+
 @agent.tool
 def add(a: int, b: int) -> int:
     """Add two integers."""
     return a + b
+
 
 print(agent.sync.call_tool("add", a=2, b=3))  # 5
 ```
@@ -102,11 +104,13 @@ from protolink.discovery import Registry
 registry = Registry(url="http://127.0.0.1:9000", transport="http")
 calculator = Agent(
     AgentCard(name="calculator", description="Adds numbers", url="http://127.0.0.1:8001"),
-    transport="http", registry=registry,
+    transport="http",
+    registry=registry,
 )
 caller = Agent(
     {"name": "caller", "description": "Sends work", "url": "http://127.0.0.1:8002"},
-    transport="http", registry=registry,
+    transport="http",
+    registry=registry,
 )
 calculator.add_tool(add)
 
@@ -169,9 +173,11 @@ planner_agent = Agent(
 
 planner_agent.add_tool(web_search())
 
+
 @planner_agent.tool(name="search_notes", description="Search local notes")
 async def search_notes(query: str) -> str:
     return f"Results for {query}"
+
 
 mcp_adapter = MCPToolAdapter(
     transport="stdio",
