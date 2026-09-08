@@ -20,13 +20,7 @@ def _make_hugging_face_llm() -> HuggingFaceLLM:
 def test_hugging_face_call_sends_messages_list_not_raw_string():
     llm = _make_hugging_face_llm()
 
-    mock_response = SimpleNamespace(
-        choices=[
-            SimpleNamespace(
-                message=SimpleNamespace(content="Response text")
-            )
-        ]
-    )
+    mock_response = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="Response text"))])
     llm._client.chat_completion.return_value = mock_response
 
     history = ConversationHistory()
@@ -53,11 +47,7 @@ def test_hugging_face_call_extracts_choices_message_content():
     llm = _make_hugging_face_llm()
 
     mock_response = SimpleNamespace(
-        choices=[
-            SimpleNamespace(
-                message=SimpleNamespace(content="Extracted content from choices")
-            )
-        ]
+        choices=[SimpleNamespace(message=SimpleNamespace(content="Extracted content from choices"))]
     )
     llm._client.chat_completion.return_value = mock_response
 
@@ -97,26 +87,10 @@ def test_hugging_face_call_raises_value_error_on_stop_iteration():
 async def test_hugging_face_call_stream_yields_expected_chunks():
     llm = _make_hugging_face_llm()
     llm._client.chat_completion.return_value = [
-        SimpleNamespace(
-            choices=[
-                SimpleNamespace(delta=SimpleNamespace(content="Hello"))
-            ]
-        ),
-        SimpleNamespace(
-            choices=[
-                SimpleNamespace(delta=SimpleNamespace(content=" "))
-            ]
-        ),
-        SimpleNamespace(
-            choices=[
-                SimpleNamespace(delta=SimpleNamespace(content="streaming"))
-            ]
-        ),
-        SimpleNamespace(
-            choices=[
-                SimpleNamespace(delta=SimpleNamespace(content="!"))
-            ]
-        ),
+        SimpleNamespace(choices=[SimpleNamespace(delta=SimpleNamespace(content="Hello"))]),
+        SimpleNamespace(choices=[SimpleNamespace(delta=SimpleNamespace(content=" "))]),
+        SimpleNamespace(choices=[SimpleNamespace(delta=SimpleNamespace(content="streaming"))]),
+        SimpleNamespace(choices=[SimpleNamespace(delta=SimpleNamespace(content="!"))]),
     ]
 
     history = ConversationHistory()
