@@ -10,9 +10,9 @@ from protolink.utils.logging import get_logger
 
 logger = get_logger("protolink.telemetry.langfuse")
 
-_current_langfuse_trace = contextvars.ContextVar("langfuse_trace", default=None)
-_current_langfuse_generation = contextvars.ContextVar("langfuse_generation", default=None)
-_current_langfuse_span = contextvars.ContextVar("langfuse_span", default=None)
+_current_langfuse_trace: contextvars.ContextVar[Any] = contextvars.ContextVar("langfuse_trace", default=None)
+_current_langfuse_generation: contextvars.ContextVar[Any] = contextvars.ContextVar("langfuse_generation", default=None)
+_current_langfuse_span: contextvars.ContextVar[Any] = contextvars.ContextVar("langfuse_span", default=None)
 
 
 class LangfuseTelemetry(Telemetry):

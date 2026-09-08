@@ -62,7 +62,7 @@ class Validator:
         if not message.id or not cls._is_valid_uuid(message.id):
             return False, "Message ID is required and must be a valid UUID"
 
-        if not message.role or not isinstance(message.role, str):
+        if not isinstance(message.role, str):
             return False, "Message role is required and must be a string"
 
         if not message.parts or not isinstance(message.parts, list):

@@ -699,7 +699,7 @@ body {{
       </div>
       <div class="info-item">
         <div class="info-label">Transport</div>
-        <div class="info-value">{_fmt(agent.transport.upper() if agent.transport else None)}</div>
+        <div class="info-value">{_fmt(agent.transport.upper())}</div>
       </div>
       <div class="info-item">
         <div class="info-label">Endpoint</div>
