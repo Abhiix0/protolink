@@ -10,9 +10,9 @@ from protolink.utils.logging import get_logger
 
 logger = get_logger("protolink.telemetry.langsmith")
 
-_current_langsmith_run = contextvars.ContextVar("langsmith_run", default=None)
-_current_langsmith_llm_run = contextvars.ContextVar("langsmith_llm_run", default=None)
-_current_langsmith_tool_run = contextvars.ContextVar("langsmith_tool_run", default=None)
+_current_langsmith_run = contextvars.ContextVar[Any | None]("langsmith_run", default=None)
+_current_langsmith_llm_run = contextvars.ContextVar[Any | None]("langsmith_llm_run", default=None)
+_current_langsmith_tool_run = contextvars.ContextVar[Any | None]("langsmith_tool_run", default=None)
 
 
 class LangSmithTelemetry(Telemetry):

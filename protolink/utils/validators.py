@@ -11,6 +11,11 @@ from protolink.core.message import Message
 from protolink.core.task import Task, TaskState
 
 
+def _is_nonempty_string(value: object) -> bool:
+    """Check raw values that dataclass construction does not validate."""
+    return isinstance(value, str) and bool(value)
+
+
 class Validator:
     """Validation helper class for Protolink objects and identifiers."""
 
@@ -62,7 +67,7 @@ class Validator:
         if not message.id or not cls._is_valid_uuid(message.id):
             return False, "Message ID is required and must be a valid UUID"
 
-        if not message.role or not isinstance(message.role, str):
+        if not _is_nonempty_string(message.role):
             return False, "Message role is required and must be a string"
 
         if not message.parts or not isinstance(message.parts, list):

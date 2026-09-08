@@ -193,8 +193,6 @@ def _resolve_public_addresses(hostname: str, port: int) -> tuple[str, ...]:
     addresses: list[str] = []
     for record in records:
         socket_address = record[4]
-        if not socket_address:
-            continue
         address = _public_ip(str(socket_address[0]))
         if address not in addresses:
             addresses.append(address)
